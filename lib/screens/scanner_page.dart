@@ -17,12 +17,11 @@ class _ScannerPageState extends State<ScannerPage> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile; 
   bool _loading = false;
-  Map<String, dynamic>? _topPrediction; // To store the best result
+  Map<String, dynamic>? _topPrediction; 
 
-  // Replace with your Roboflow credentials
-  final String _project = 'waste-segregation-yrfaz'; // your project name
-  final String _version = '1'; // your version
-  final String _apiKey = 'RNCpup3CKFY5xQzHYZqb'; // your private api key
+  final String _project = 'waste-segregation-yrfaz'; 
+  final String _version = '1'; 
+  final String _apiKey = 'RNCpup3CKFY5xQzHYZqb'; 
 
   String get _url =>
       'https://detect.roboflow.com/$_project/$_version?api_key=$_apiKey';
@@ -32,7 +31,7 @@ class _ScannerPageState extends State<ScannerPage> {
     if (picked == null) return;
     setState(() {
       _imageFile = File(picked.path);
-      _topPrediction = null; // Clear previous prediction
+      _topPrediction = null; 
     });
     _sendToModel(_imageFile!);
   }
@@ -40,25 +39,25 @@ class _ScannerPageState extends State<ScannerPage> {
   Future<void> _sendToModel(File image) async {
     setState(() => _loading = true);
     try {
-      // 1. Read image as bytes
+      
       final imageBytes = await image.readAsBytes();
-      // 2. Base64 encode the bytes
+      
       String base64Image = base64Encode(imageBytes);
 
-      // 3. Make the POST request
+     
       final response = await http.post(
-        Uri.parse('$_url&name=image.jpg'), // Added image name to URL
+        Uri.parse('$_url&name=image.jpg'), 
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: base64Image,
       );
 
-      // 4. Decode the response
+      
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['predictions'] != null && data['predictions'].isNotEmpty) {
-          // Find the prediction with the highest confidence
+          
           final predictions = List<Map<String, dynamic>>.from(data['predictions']);
           predictions.sort((a, b) => b['confidence'].compareTo(a['confidence']));
           setState(() {
@@ -83,7 +82,7 @@ class _ScannerPageState extends State<ScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Your AppBar can go here
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

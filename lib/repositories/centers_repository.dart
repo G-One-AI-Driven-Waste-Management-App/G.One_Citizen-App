@@ -1,7 +1,5 @@
-// lib/repositories/centers_repository.dart
-import 'dart:async';
-import 'package:uuid/uuid.dart';
 import '../models/center.dart';
+import '../services/api_service.dart';
 
 class CentersRepository {
   CentersRepository._internal();
@@ -9,58 +7,45 @@ class CentersRepository {
   factory CentersRepository() => _instance;
   static CentersRepository get instance => _instance;
 
-  final List<CenterModel> _centers = [
-  CenterModel(
-    id: Uuid().v4(),
-    name: 'Recycling Center A',
-    type: 'Recycling',
-    address: 'Sector 5, Gurugram',
-    latitude: 28.4590, // near Gurugram
-    longitude: 77.0270,
-    phone: '080-1234-0001',
-  ),
-  CenterModel(
-    id: Uuid().v4(),
-    name: 'Biogas Plant B',
-    type: 'Biogas',
-    address: 'Energy Park Road, Delhi',
-    latitude: 28.6150, // near Delhi
-    longitude: 77.2100,
-    phone: '080-1234-0002',
-  ),
-  CenterModel(
-    id: Uuid().v4(),
-    name: 'Waste-to-Energy Plant C',
-    type: 'W-to-E',
-    address: 'Industrial Estate, Gurugram',
-    latitude: 28.4605, 
-    longitude: 77.0280,
-    phone: '080-1234-0003',
-  ),
-  CenterModel(
-    id: Uuid().v4(),
-    name: 'Scrap Shop D',
-    type: 'Scrap Shop',
-    address: 'Old Market Road, Delhi',
-    latitude: 28.6145,
-    longitude: 77.2080,
-    phone: '080-1234-0004',
-  ),
-];
-
-
+  /// Fetch all active centers from the Spring Boot backend
   Future<List<CenterModel>> fetchCenters() async {
-    await Future.delayed(Duration(milliseconds: 250)); // simulate latency
-    return List.unmodifiable(_centers);
+    final list = await ApiService.getCenters();
+    return _mapList(list);
   }
 
-  // Optional: find a center by id
+  /// Fetch centers sorted by nearest GPS distance (server-side sort)
+  Future<List<CenterModel>> fetchNearestCenters({
+    required double lat,
+    required double lng,
+    int limit = 10,
+  }) async {
+    final list = await ApiService.getNearestCenters(
+      lat: lat, lng: lng, limit: limit,
+    );
+    return _mapList(list);
+  }
+
   Future<CenterModel?> getById(String id) async {
-    await Future.delayed(Duration(milliseconds: 100));
+    final all = await fetchCenters();
     try {
-      return _centers.firstWhere((c) => c.id == id);
-    } catch (e) {
+      return all.firstWhere((c) => c.id == id);
+    } catch (_) {
       return null;
     }
+  }
+
+  List<CenterModel> _mapList(List<dynamic> list) {
+    return list.map((json) {
+      final j = json as Map<String, dynamic>;
+      return CenterModel(
+        id:        j['id']       as String,
+        name:      j['name']     as String,
+        type:      (j['type']    as String?) ?? 'General',
+        address:   (j['address'] as String?) ?? '',
+        latitude:  (j['latitude']  as num).toDouble(),
+        longitude: (j['longitude'] as num).toDouble(),
+        phone:     (j['phone']  as String?) ?? '',
+      );
+    }).toList();
   }
 }

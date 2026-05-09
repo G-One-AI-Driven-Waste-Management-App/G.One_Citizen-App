@@ -1,23 +1,39 @@
-import 'dart:async';
-// import 'package:uuid/uuid.dart';
+import 'dart:io';
 import '../models/report.dart';
+import '../services/api_service.dart';
 
 class ReportRepository {
-  // In-memory mock list
-  final List<Report> _reports = [];
-
+  /// Submit report — with or without photo — to the Spring Boot backend
   Future<void> submitReport(Report report) async {
-    // simulate network delay and occasional error
-    await Future.delayed(Duration(seconds: 1));
-    final rand = DateTime.now().millisecondsSinceEpoch % 10;
-    if (rand == 0) {
-      throw Exception('Network error (mock)');
+    if (report.photoPath != null) {
+      await ApiService.submitReportWithPhoto(
+        description: report.description,
+        latitude:    report.latitude,
+        longitude:   report.longitude,
+        photo:       File(report.photoPath!),
+      );
+    } else {
+      await ApiService.submitReport(
+        description: report.description,
+        latitude:    report.latitude,
+        longitude:   report.longitude,
+      );
     }
-    _reports.add(report);
   }
 
+  /// Fetch all reports for the logged-in user from the backend
   Future<List<Report>> fetchReports() async {
-    await Future.delayed(Duration(milliseconds: 300));
-    return List.from(_reports);
+    final list = await ApiService.getReports();
+    return list.map((json) {
+      final j = json as Map<String, dynamic>;
+      return Report(
+        id:          j['id']          as String,
+        description: j['description'] as String,
+        latitude:    (j['latitude']   as num).toDouble(),
+        longitude:   (j['longitude']  as num).toDouble(),
+        createdAt:   DateTime.parse(j['createdAt'] as String),
+        photoPath:   j['photoPath']   as String?,
+      );
+    }).toList();
   }
 }

@@ -1,6 +1,5 @@
-// lib/repositories/pickup_repository.dart
-import 'dart:async';
 import '../models/pickup_schedule.dart';
+import '../services/api_service.dart';
 
 class PickupRepository {
   PickupRepository._internal();
@@ -8,37 +7,35 @@ class PickupRepository {
   factory PickupRepository() => _instance;
   static PickupRepository get instance => _instance;
 
-  final List<PickupSchedule> _schedules = [];
-
+  /// Get all pickups for the logged-in user from the backend
   Future<List<PickupSchedule>> getSchedules() async {
-    // simulate small delay like a real API
-    await Future.delayed(Duration(milliseconds: 200));
-    // return a copy so callers can't mutate internal list directly
-    return List.unmodifiable(_schedules);
-  }
-
-  Future<void> addSchedule(PickupSchedule schedule) async {
-    await Future.delayed(Duration(milliseconds: 150));
-    // insert at top (most recent first)
-    _schedules.insert(0, schedule);
-  }
-
-  Future<void> removeSchedule(String id) async {
-    await Future.delayed(Duration(milliseconds: 100));
-    _schedules.removeWhere((s) => s.id == id);
-  }
-
-  Future<void> markCompleted(String id) async {
-    await Future.delayed(Duration(milliseconds: 100));
-    final idx = _schedules.indexWhere((s) => s.id == id);
-    if (idx >= 0) {
-      final old = _schedules[idx];
-      _schedules[idx] = PickupSchedule(
-        id: old.id,
-        centerName: old.centerName,
-        pickupDate: old.pickupDate,
-        status: 'Completed',
+    final list = await ApiService.getPickups();
+    return list.map((json) {
+      final j = json as Map<String, dynamic>;
+      return PickupSchedule(
+        id:         j['id']         as String,
+        centerName: j['centerName'] as String,
+        pickupDate: DateTime.parse(j['pickupDate'] as String),
+        status:     (j['status']    as String?) ?? 'Scheduled',
       );
-    }
+    }).toList();
+  }
+
+  /// Book a new pickup on the backend
+  Future<void> addSchedule(PickupSchedule schedule) async {
+    await ApiService.bookPickup(
+      centerName: schedule.centerName,
+      pickupDate: schedule.pickupDate,
+    );
+  }
+
+  /// Cancel a pickup — sends PATCH /api/pickups/{id}/status with Cancelled
+  Future<void> removeSchedule(String id) async {
+    await ApiService.updatePickupStatus(pickupId: id, status: 'Cancelled');
+  }
+
+  /// Mark a pickup as completed — sends PATCH /api/pickups/{id}/status
+  Future<void> markCompleted(String id) async {
+    await ApiService.updatePickupStatus(pickupId: id, status: 'Completed');
   }
 }
