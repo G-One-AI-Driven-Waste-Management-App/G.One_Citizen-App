@@ -50,6 +50,13 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(width: 8),
             Text('Create Account',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+                SizedBox(height: 8),
+                          Text(' (Minimum 6 digit password)',
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 13),
+                              textAlign: TextAlign.center),
+                          SizedBox(height: 18),
           ],
         ),
         content: Column(
