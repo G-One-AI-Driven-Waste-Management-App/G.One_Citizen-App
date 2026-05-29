@@ -16,6 +16,20 @@
 ## 📌 Overview
 
 The G.One Citizen App allows residents to actively participate in waste management. Citizens can report illegal dumping with AI-assisted classification, schedule waste pickups, find nearby collection centers, earn points and badges, and watch training videos — all from their mobile device.
+---
+
+🚀 Live Demo
+Citizen App (Flutter)
+
+🔗 https://appetize.io/app/b_kzda4v4gp5lws7xesndomvbljm
+
+Admin Dashboard
+
+🔗 https://gone-admin.vercel.app
+
+Backend API
+
+🔗 https://gonebackend-production.up.railway.app
 
 ---
 
