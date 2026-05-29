@@ -162,9 +162,9 @@ class _DashboardContentState extends State<DashboardContent> {
                                         ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content: Text(
-                                              'Leaderboard page - coming soon')),
+                                              'These are the top scorers')),
                                     ),
-                                    child: Text('View full leaderboard'),
+                                    child: Text('📊'),
                                   ),
                                 )
                               ],

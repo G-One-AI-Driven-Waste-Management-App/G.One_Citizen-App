@@ -255,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () => ScaffoldMessenger.of(context)
                                 .showSnackBar(SnackBar(
                                     content:
-                                        Text('Reset flow - coming soon'))),
+                                        Text('Please Register Again'))),
                             child: Text('Forgot password?',
                                 style: TextStyle(color: primary)),
                           ),
