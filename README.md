@@ -19,6 +19,7 @@ The G.One Citizen App allows residents to actively participate in waste manageme
 ---
 
 🚀 Live Demo
+
 Citizen App (Flutter)
 
 🔗 https://appetize.io/app/b_kzda4v4gp5lws7xesndomvbljm
