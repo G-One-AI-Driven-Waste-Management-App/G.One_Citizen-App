@@ -20,21 +20,21 @@ The G.One Citizen App allows residents to actively participate in waste manageme
 
 🚀 Live Demo
 
-Citizen App (Flutter)
+### Citizen App (Flutter)
 
-### APK Download
+APK Download
 
 🔗   https://github.com/G-One-AI-Driven-Waste-Management-App/G.One_Citizen-App/releases/download/v1.0.0/app-release.apk
 
-### Live Demo
+Live Demo
 
 🔗 https://appetize.io/app/b_tmudra5u7uhtscvsgzt7y3mesq
 
-Admin Dashboard
+### Admin Dashboard
 
 🔗 https://gone-admin.vercel.app
 
-Backend API
+### Backend API
 
 🔗 https://gonebackend-production.up.railway.app
 
