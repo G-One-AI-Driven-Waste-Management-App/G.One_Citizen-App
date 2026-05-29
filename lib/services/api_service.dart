@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://10.179.113.90:8080/api';
+  static const String baseUrl = 'http://10.238.6.90:8080/api';
 
   static String? _token;
   static String? _userId;
@@ -97,27 +97,30 @@ class ApiService {
   }
 
   static Future<void> submitReportWithPhoto({
-    required String description,
-    required double latitude,
-    required double longitude,
-    required File photo,
-  }) async {
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$baseUrl/reports/with-photo'),
-    );
-    request.headers['Authorization'] = 'Bearer $_token';
-    request.fields['description'] = description;
-    request.fields['latitude']    = latitude.toString();
-    request.fields['longitude']   = longitude.toString();
-    request.files.add(
-      await http.MultipartFile.fromPath('photo', photo.path),
-    );
-    final streamed = await request.send();
-    if (streamed.statusCode != 201) {
-      throw Exception('Failed to submit report with photo');
-    }
+  required String description,
+  required double latitude,
+  required double longitude,
+  required File photo,
+}) async {
+  final request = http.MultipartRequest(
+    'POST',
+    Uri.parse('$baseUrl/reports/with-photo'),
+  );
+  request.headers['Authorization'] = 'Bearer $_token';
+  request.fields['description'] = description;
+  request.fields['latitude']    = latitude.toString();
+  request.fields['longitude']   = longitude.toString();
+  request.files.add(
+    await http.MultipartFile.fromPath('photo', photo.path),
+  );
+  final streamed = await request.send();
+  
+  // Accept both 200 and 201
+  if (streamed.statusCode != 200 && streamed.statusCode != 201) {
+    final body = await streamed.stream.bytesToString();
+    throw Exception('Failed to submit report with photo: $body');
   }
+}
 
   static Future<List<dynamic>> getReports() async {
     final response = await http.get(
