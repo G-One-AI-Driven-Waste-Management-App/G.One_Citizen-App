@@ -1,54 +1,108 @@
-# 🌿 G.One – AI-Driven Waste Management App ♻️
+# 📱 G.One Citizen App — Flutter
 
-> **Green One (G.One)** — an AI-powered Flutter mobile app promoting sustainable waste management through **AI waste segregation**, **geolocation-based reporting**, **training modules**, **gamification**, and **recycling center scheduling**.
+<div align="center">
 
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![BLoC](https://img.shields.io/badge/BLoC-13B9FD?style=for-the-badge&logo=flutter&logoColor=white)
+![Roboflow](https://img.shields.io/badge/Roboflow_AI-8E44AD?style=for-the-badge&logoColor=white)
 
----
+**The citizen-facing Flutter app for G.One waste management platform**
 
-## 🧩 Features
-
-✅ **AI Waste Segregation Scanner**  
-- Capture waste images using the camera or gallery  
-- Uses Roboflow API to identify waste type (plastic, metal, organic, etc.)  
-
-✅ **Report Illegal Dumping**  
-- Submit waste reports with image and geolocation  
-- Helps local Green Champions track issues  
-
-✅ **Schedule Pickup**  
-- Book waste pickups and connect with nearby recycling centers  
-
-✅ **Nearest Centers Finder**  
-- Locate nearby biogas plants, recycling & W2E centers  
-
-✅ **Gamification + Leaderboard**  
-- Earn points and badges for contributing to a cleaner environment  
-
-✅ **Training Videos**  
-- Watch YouTube-based guides to learn waste segregation  
+</div>
 
 ---
 
-## 🧠 Tech Stack
+## 📌 Overview
 
-| Layer | Technology |
-|-------|-------------|
-| **Frontend** | Flutter (Dart) |
-| **State Management** | BLoC & Provider |
-| **AI Integration** | Roboflow Detection API |
-| **Media Handling** | `image_picker`, `youtube_player_iframe` |
-| **Location Services** | `geolocator`, `url_launcher` |
-| **UI Components** | Material Design, Google Fonts |
-| **(Future)** Backend | Spring Boot (Java), MySQL / Firebase |
+The G.One Citizen App allows residents to actively participate in waste management. Citizens can report illegal dumping with AI-assisted classification, schedule waste pickups, find nearby collection centers, earn points and badges, and watch training videos — all from their mobile device.
 
 ---
 
-## 🚀 Project Structure
+## ✨ Features
 
+### 🤖 AI Waste Scanner
+- Point camera at any waste item
+- Roboflow AI model classifies the waste type in real time
+- Result auto-fills the report submission form
+
+### 📸 Report Illegal Dumping
+- Capture or upload a photo of the dumping site
+- Add a description
+- GPS location auto-tagged
+- Submit to backend → earn **110 points** instantly
+
+### 🗺️ Nearest Collection Centers
+- Uses device GPS to get current location
+- Fetches all registered waste centers from backend
+- Calculates distance using **Haversine formula**
+- Shows centers sorted by nearest first with directions
+
+### 🏆 Leaderboard & Gamification
+- Live leaderboard ranked by points (fetched from backend)
+- Personal stats: points, level (1–10), streak days, badges
+- Encourages continued participation
+
+### 📦 Schedule Waste Pickup
+- Enter pickup address
+- Select date and time slot
+- Track status: Pending → Assigned → Completed
+
+### 🎓 Training Videos
+- Browse waste management training modules uploaded by admin
+- Watch videos, earn XP on completion
+
+---
+
+## 🏗️ Architecture
+
+Built with **Clean Architecture** pattern:
+
+```
 lib/
-┣ 📂 blocs/ # BLoC State Management (Auth, Report, etc.)
-┣ 📂 models/ # Data Models (Report, Center, Schedule)
-┣ 📂 repositories/ # Data & API handling logic
-┣ 📂 screens/ # All UI Screens (Dashboard, Scanner, etc.)
-┣ 📜 main.dart # Entry point
+├── blocs/           # BLoC state management (Events, States, Blocs)
+│   ├── auth/
+│   ├── report/
+│   └── pickup/
+├── models/          # Data models (Report, User, PickupRequest)
+├── repositories/    # Data layer — calls ApiService, returns models
+├── services/        # ApiService — all HTTP calls with JWT headers
+├── pages/           # UI screens
+│   ├── login_page.dart
+│   ├── dashboard_page.dart
+│   ├── report_page.dart
+│   ├── profile_page.dart
+│   ├── leaderboard_page.dart
+│   ├── nearest_centers_page.dart
+│   ├── schedule_pickup_page.dart
+│   └── training_page.dart
+└── main.dart
+```
+
+---
+
+## 🔐 Authentication
+
+- JWT token stored in memory after login
+- Every API request includes `Authorization: Bearer <token>` header
+- Auto-redirect to login if token is missing
+
+---
+
+## ⚙️ Tech Stack
+
+- Flutter 3.x / Dart
+- BLoC + Provider state management
+- `http` — REST API calls
+- `image_picker` — camera and gallery photo selection
+- `geolocator` — GPS coordinates
+- `google_maps_flutter` — map display and location picker
+- `uuid` — unique ID generation
+
+---
+
+## 🔗 Related Repositories
+
+- [gone-backend](../gone-backend) — Spring Boot REST API
+- [gone-admin](../gone-admin) — Admin Flutter dashboard
 
