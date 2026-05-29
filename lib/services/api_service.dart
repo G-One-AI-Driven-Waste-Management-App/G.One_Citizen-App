@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://10.238.6.90:8080/api';
+  static const String baseUrl =
+      'https://gonebackend-production.up.railway.app/api';
 
   static String? _token;
   static String? _userId;
   static String? _username;
 
-  static String? get token    => _token;
-  static String? get userId   => _userId;
+  static String? get token => _token;
+  static String? get userId => _userId;
   static String? get username => _username;
-  static bool   get isLoggedIn => _token != null;
+  static bool get isLoggedIn => _token != null;
 
   static const Map<String, String> _publicHeaders = {
     'Content-Type': 'application/json',
@@ -59,8 +60,8 @@ class ApiService {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      _token    = data['token']    as String;
-      _userId   = data['userId']   as String;
+      _token = data['token'] as String;
+      _userId = data['userId'] as String;
       _username = data['username'] as String;
       return data;
     }
@@ -68,8 +69,8 @@ class ApiService {
   }
 
   static void logout() {
-    _token    = null;
-    _userId   = null;
+    _token = null;
+    _userId = null;
     _username = null;
   }
 
@@ -87,8 +88,8 @@ class ApiService {
       headers: _authHeaders,
       body: jsonEncode({
         'description': description,
-        'latitude':    latitude,
-        'longitude':   longitude,
+        'latitude': latitude,
+        'longitude': longitude,
       }),
     );
     if (response.statusCode != 200 && response.statusCode != 201) {
@@ -97,30 +98,28 @@ class ApiService {
   }
 
   static Future<void> submitReportWithPhoto({
-  required String description,
-  required double latitude,
-  required double longitude,
-  required File photo,
-}) async {
-  final request = http.MultipartRequest(
-    'POST',
-    Uri.parse('$baseUrl/reports/with-photo'),
-  );
-  request.headers['Authorization'] = 'Bearer $_token';
-  request.fields['description'] = description;
-  request.fields['latitude']    = latitude.toString();
-  request.fields['longitude']   = longitude.toString();
-  request.files.add(
-    await http.MultipartFile.fromPath('photo', photo.path),
-  );
-  final streamed = await request.send();
-  
-  // Accept both 200 and 201
-  if (streamed.statusCode != 200 && streamed.statusCode != 201) {
-    final body = await streamed.stream.bytesToString();
-    throw Exception('Failed to submit report with photo: $body');
+    required String description,
+    required double latitude,
+    required double longitude,
+    required File photo,
+  }) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/reports/with-photo'),
+    );
+    request.headers['Authorization'] = 'Bearer $_token';
+    request.fields['description'] = description;
+    request.fields['latitude'] = latitude.toString();
+    request.fields['longitude'] = longitude.toString();
+    request.files.add(await http.MultipartFile.fromPath('photo', photo.path));
+    final streamed = await request.send();
+
+    // Accept both 200 and 201
+    if (streamed.statusCode != 200 && streamed.statusCode != 201) {
+      final body = await streamed.stream.bytesToString();
+      throw Exception('Failed to submit report with photo: $body');
+    }
   }
-}
 
   static Future<List<dynamic>> getReports() async {
     final response = await http.get(
